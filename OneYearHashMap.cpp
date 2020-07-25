@@ -11,6 +11,18 @@ OneYearHashMap::Node::Node(int hashedKey, float value) {
     this->value = value;
 }
 
+bool OneYearHashMap::Node::operator<(const OneYearHashMap::Node* a) {
+    return this->value < a->value;
+}
+
+bool OneYearHashMap::Node::operator>(const OneYearHashMap::Node* a) {
+    return this->value > a->value;
+}
+
+bool OneYearHashMap::Node::operator==(const OneYearHashMap::Node *a) {
+    return this->value == a->value;
+}
+
 OneYearHashMap::OneYearHashMap(int year) {
     this->year = year;
 }
@@ -75,10 +87,13 @@ float OneYearHashMap::getValue(std::string &key) {
     return keys[hash(key)]->value;
 }
 
-
 void OneYearHashMap::sortValues() {
 
-   //todo implement sort function for array of nodes
+   std::sort(values, values+size,
+           [](const Node* a, const Node* b)->bool
+           {
+                return a->value > b->value;
+           });
 }
 
 

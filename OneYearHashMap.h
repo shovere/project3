@@ -18,6 +18,9 @@ public:
     public:
         float value;
         Node(int hashedKey, float value);
+        bool operator< (const Node* a);
+        bool operator> (const Node* a);
+        bool operator == (const Node* a);
     };
 
     OneYearHashMap(int year);
@@ -26,6 +29,7 @@ public:
     std::string reverseHash(int hashedKey);
     Node* operator[] (std::string& key);
     float getValue(std::string& key);
+
 
 private:
     void sortValues();
