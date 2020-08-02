@@ -36,6 +36,7 @@ public:
         bool operator< (const KeyNode* a);
         bool operator> (const KeyNode* a);
         bool operator == (const KeyNode* a);
+        ~KeyNode();
     };
 
     FiveYearHashMap(std::string& file, std::string& name);
@@ -45,6 +46,7 @@ public:
     ValueNode* operator[] (std::string& key);
     float getValue(std::string& key);
     void importAll(std::string &file, std::string& name);
+    ~FiveYearHashMap();
 
 
 private:
@@ -53,12 +55,27 @@ private:
     void sortValues();
     const static int days = 31*12;
     const static int numValues = 619041;//numValues in data set
-
     KeyNode* keys[days] = {nullptr};
-
     ValueNode** values = nullptr;
+
+
     //need to implement the big three
 };
+
+FiveYearHashMap::KeyNode::~KeyNode() {
+    delete nextNode;
+    delete theValue;
+}
+
+
+FiveYearHashMap::~FiveYearHashMap() {
+
+    for (int i = 0; i < numlines; ++i)
+    {
+        delete keys[i];
+    }
+    delete[] values;
+}
 
 void FiveYearHashMap::importAll(std::string &file, std::string& name)
 {
@@ -335,5 +352,6 @@ void FiveYearHashMap::sortValues() {
                   return a->value > b->value;
               });
 }
+
 
 
