@@ -63,16 +63,20 @@ private:
 };
 
 FiveYearHashMap::KeyNode::~KeyNode() {
-    delete nextNode;
-    delete theValue;
+
+    if(nextNode != nullptr)
+        delete nextNode;
 }
 
 
 FiveYearHashMap::~FiveYearHashMap() {
 
-    for (int i = 0; i < numlines; ++i)
+    for (int i = 0; i < 372; ++i)
     {
-        delete keys[i];
+        if(keys[i] != nullptr)
+        {
+            delete keys[i];
+        }
     }
     delete[] values;
 }
