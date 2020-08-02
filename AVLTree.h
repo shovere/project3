@@ -1,10 +1,12 @@
 #pragma once
 #include <iostream>
 #include <algorithm>
+#include <vector>
 
 template <typename T>
 class AVLTree {
 private:
+
 	struct Node {
 		T data;
 		Node* left;
@@ -15,7 +17,8 @@ private:
 		Node(T& data, Node* left, Node* right);
 	};
 	Node* root;
-	
+	bool (*comparison)(T&, T&);
+	static 	bool cmp(T& first, T& second);
 
 	Node* Search(Node* node, T& data);
 	Node* RotateLeft(Node* node);
@@ -30,15 +33,21 @@ private:
 	void Traverse(Node* root); //In order traversal
 	void CopyFromTree(Node* node);
 	Node* FindParent(Node* node, Node* child);
+	std::vector<T>& GetAscending(Node* node, std::vector<T>& vec, int num);
+	std::vector<T>& GetDecending(Node* node, std::vector<T>& vec, int num);
+
 public:
 	int size;
 	AVLTree();
+	AVLTree(bool (*comparison)(T&, T&));
 	AVLTree(AVLTree& other);
 	AVLTree& operator=(AVLTree& other);
 	~AVLTree();
 	void Insert(T data);
 	bool Delete(T data);
 	bool Find(T data);
+	std::vector<T>& Ascend(std::vector<T>& vec, int num = size);
+	std::vector<T>& Decend(std::vector<T>& vec, int num = size);
 	void Clear();
 	void Print();
 };
@@ -67,18 +76,29 @@ AVLTree<T>::Node::Node(T& data, Node* left, Node* right) {
 template <typename T>
 AVLTree<T>::AVLTree() {
 	root = nullptr;
+	comparison = &AVLTree<T>::cmp;
 	size = 0;
 }
 
 template <typename T>
+AVLTree<T>::AVLTree(bool (*comp)(T&, T&)) {
+	root = nullptr;
+	comparison = &AVLTree<T>::comp;
+	size = 0;
+}
+
+
+template <typename T>
 AVLTree<T>::AVLTree(AVLTree& other) {
 	size = 0;
+	comparison = other.comparison;
 	CopyFromTree(other.root);
 }
 
 template <typename T>
 typename AVLTree<T>::AVLTree& AVLTree<T>::operator=(AVLTree& other) {
 	Clear();
+	comparison = other.comparison;
 	CopyFromTree(other.root);
 	return *this;
 }
@@ -157,9 +177,9 @@ template <typename T>
 typename AVLTree<T>::Node* AVLTree<T>::Search(Node* node, T& data) {
 	if (!node)
 		return node;
-	if (data < node->data)
+	if (comparison(data, node->data))
 		Search(node->left, data);
-	else if (data > node->data)
+	else if (comparison(node->data, data))
 		Search(node->right, data);
 	else
 		return node;
@@ -178,10 +198,10 @@ typename AVLTree<T>::Node* AVLTree<T>::InsertNode(Node* node, T& data) {
 		size++;
 		return node;
 	}
-	if (data < node->data) {
+	if (comparison(data, node->data)) {
 		node->left = InsertNode(node->left, data);
 	}
-	else if (data > node->data) {
+	else if (comparison(node->data, data)) {
 		node->right = InsertNode(node->right, data);
 	}
 	return node;
@@ -192,11 +212,11 @@ typename AVLTree<T>::Node* AVLTree<T>::FindParent(Node* node, Node* child) {
 	Node* parent = nullptr;
 	Node* nextNode = node;
 	while (nextNode) {
-		if (child->data < nextNode->data) {
+		if (comparison(child->data, nextNode->data)) {
 			parent = nextNode;
 			nextNode = nextNode->left;
 		}
-		else if (child->data > nextNode->data) {
+		else if (comparison(nextNode->data, child->data)) {
 			parent = nextNode;
 			nextNode = nextNode->right;
 		}
@@ -321,4 +341,52 @@ void AVLTree<T>::CopyFromTree(Node* node) {
 	CopyFromTree(node->left);
 	Insert(node->data);
 	CopyFromTree(node->right);
+}
+
+template <typename T>
+std::vector<T>& AVLTree<T>::GetAscending(Node* node, std::vector<T>& vec, int num) {
+	if (!node)
+		return vec;
+	if (vec.size() < num) {
+		GetAscending(node->left, vec, num);
+	}
+	if(vec.size() < num) {
+		vec.push_back(node->data);
+	}
+	if (vec.size() < num) {
+		GetAscending(node->right, vec, num);
+	}
+	return vec;
+
+}
+
+template <typename T>
+std::vector<T>& AVLTree<T>::GetDecending(Node* node, std::vector<T>& vec, int num) {
+	if (!node)
+		return vec;
+	if (vec.size() < num) {
+		GetDecending(node->right, vec, num);
+	}
+	if (vec.size() < num) {
+		vec.push_back(node->data);
+	}
+	if (vec.size() < num) {
+		GetDecending(node->left, vec, num);
+	}
+	return vec;
+}
+
+template <typename T>
+std::vector<T>& AVLTree<T>::Ascend(std::vector<T>& vec, int num) {
+	return GetAscending(root, vec, num);
+}
+
+template <typename T>
+std::vector<T>& AVLTree<T>::Decend(std::vector<T>& vec, int num) {
+	return GetDecending(root, vec, num);
+}
+
+template <typename T>
+bool AVLTree<T>::cmp(T& first, T& second) {
+	return first < second;
 }
