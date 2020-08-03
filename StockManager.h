@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include "AVLTree.h"
+#include "FiveYearHashMap.h"
 
 class StockManager
 {
@@ -9,7 +10,8 @@ private:
 	struct Stock {
 		double avgValue;
 		std::string name;
-		//Store whatever data structure ethan makes here
+		FiveYearHashMap* fyhm;
+		Stock(std::string name, std::string file);
 		void Print(Stock stock);
 	};
 	AVLTree<Stock> stocksByValue;
