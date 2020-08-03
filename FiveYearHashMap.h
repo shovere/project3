@@ -14,6 +14,7 @@
 class FiveYearHashMap
 {
 public:
+    float averageValue;
     class ValueNode
     {
     private:
@@ -46,12 +47,14 @@ public:
     ValueNode* operator[] (std::string& key);
     float getValue(std::string& key);
     void importAll(std::string &file, std::string& name);
+
     ~FiveYearHashMap();
 
 
 private:
-    int numlines;
-    int size;
+    float setAvgValue();
+    int numlines;//value node setter
+    int size;//value node input tracker, should be same as numlines at end
     void sortValues();
     const static int days = 31*12;
     const static int numValues = 619041;//numValues in data set
@@ -163,7 +166,7 @@ FiveYearHashMap::FiveYearHashMap(std::string &file, std::string& name) {
     fin.close();
     values = new ValueNode*[numlines];
     importAll(file, name);
-
+    averageValue = setAvgValue();
 
 
 
@@ -355,6 +358,17 @@ void FiveYearHashMap::sortValues() {
               {
                   return a->value > b->value;
               });
+}
+
+float FiveYearHashMap::setAvgValue()
+{
+    float avgCost = 0;
+    for (int i = 0; i < numlines; ++i)
+    {
+        avgCost += values[i]->value;
+    }
+    avgCost /= (float)numlines;
+    return avgCost;
 }
 
 
