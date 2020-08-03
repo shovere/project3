@@ -19,9 +19,6 @@ private:
 	};
 	AVLTree<Stock*>* stocksByValue;
 	AVLTree<Stock*>* stocksByName;
-	std::vector<Stock*> FindAllStocks();
-	std::vector<Stock*> FindTopStocks(int num, StockOrder order);
-	Stock* FindStock(std::string name);
 
 	static bool compByName(Stock* first, Stock* second);
 	static bool compByValue(Stock* first, Stock* second);
@@ -31,5 +28,9 @@ public:
 	StockManager(std::string fileName);
 	void LoadFile(std::string fileName);
 	void PrintStock(std::string name);
+
+	std::vector<Stock*> FindAllStocks();
+	std::vector<Stock*> FindTopStocks(int num, StockOrder order);
+	Stock* FindStock(std::string name);
 };
 
