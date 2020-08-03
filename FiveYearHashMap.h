@@ -13,7 +13,12 @@
 
 class FiveYearHashMap
 {
+
+	
 public:
+	std::vector<std::string> dates;
+	const static int days = 31 * 12;//372
+	int size;//value node input tracker, should be same as numlines at end
     float averageValue;
     class ValueNode
     {
@@ -40,6 +45,8 @@ public:
         ~KeyNode();
     };
 
+	KeyNode* keys[days] = { nullptr };
+	ValueNode** values = nullptr;
     FiveYearHashMap(std::string& file, std::string& name);
     void setPair(std::string& key, float value);
     int hash(std::string& key);
@@ -54,12 +61,9 @@ public:
 private:
     float setAvgValue();
     int numlines;//value node setter
-    int size;//value node input tracker, should be same as numlines at end
     void sortValues();
-    const static int days = 31*12;
     const static int numValues = 619041;//numValues in data set
-    KeyNode* keys[days] = {nullptr};
-    ValueNode** values = nullptr;
+   
 
 
     //need to implement the big three
@@ -126,6 +130,7 @@ void FiveYearHashMap::importAll(std::string &file, std::string& name)
         }
         if(cont)
         {
+			dates.push_back(date);
             this->setPair(date, val);
         }
         if(tr == numlines)
@@ -149,7 +154,6 @@ FiveYearHashMap::FiveYearHashMap(std::string &file, std::string& name) {
 
     std::string temp;
     std::string word;
-    bool isName = false;
 
     while(fin >> temp)
     {

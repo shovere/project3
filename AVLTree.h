@@ -37,7 +37,7 @@ private:
 	std::vector<T>& GetDecending(Node* node, std::vector<T>& vec, int num);
 
 public:
-	int size;
+	static int size;
 	AVLTree();
 	AVLTree(bool (*comparison)(T, T));
 	AVLTree(AVLTree& other);
@@ -83,7 +83,7 @@ AVLTree<T>::AVLTree() {
 template <typename T>
 AVLTree<T>::AVLTree(bool (*comp)(T, T)) {
 	root = nullptr;
-	comparison = AVLTree<T>::comp;
+	comparison = comp;
 	size = 0;
 }
 
