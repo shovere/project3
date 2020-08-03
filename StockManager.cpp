@@ -27,7 +27,8 @@ bool StockManager::compByValue(Stock* first, Stock* second) {
 }
 
 std::vector<StockManager::Stock*> StockManager::FindAllStocks() {
-
+	std::vector<Stock*> vec;
+	return stocksByName->Decend(vec);
 }
 
 std::vector<StockManager::Stock*> StockManager::FindTopStocks(int num) {
