@@ -18,7 +18,7 @@ private:
 	};
 	Node* root;
 	bool (*comparison)(T&, T&);
-	static 	bool cmp(T& first, T& second);
+	static bool cmp(T& first, T& second);
 
 	Node* Search(Node* node, T& data);
 	Node* RotateLeft(Node* node);
@@ -45,7 +45,7 @@ public:
 	~AVLTree();
 	void Insert(T data);
 	bool Delete(T data);
-	bool Find(T data);
+	T& Find(T data);
 	std::vector<T>& Ascend(std::vector<T>& vec, int num = size);
 	std::vector<T>& Decend(std::vector<T>& vec, int num = size);
 	void Clear();
@@ -309,8 +309,8 @@ bool AVLTree<T>::Delete(T data) {
 }
 
 template <typename T>
-bool AVLTree<T>::Find(T data) {
-	return Search(root, data);
+T& AVLTree<T>::Find(T data) {
+	return Search(root, data)->data;
 }
 
 template <typename T>
