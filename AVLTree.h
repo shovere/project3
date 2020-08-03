@@ -17,7 +17,7 @@ private:
 		Node(T& data, Node* left, Node* right);
 	};
 	Node* root;
-	bool (*comparison)(T&, T&);
+	bool (*comparison)(T, T);
 	static bool cmp(T& first, T& second);
 
 	Node* Search(Node* node, T& data);
@@ -39,7 +39,7 @@ private:
 public:
 	int size;
 	AVLTree();
-	AVLTree(bool (*comparison)(T&, T&));
+	AVLTree(bool (*comparison)(T, T));
 	AVLTree(AVLTree& other);
 	AVLTree& operator=(AVLTree& other);
 	~AVLTree();
@@ -76,14 +76,14 @@ AVLTree<T>::Node::Node(T& data, Node* left, Node* right) {
 template <typename T>
 AVLTree<T>::AVLTree() {
 	root = nullptr;
-	comparison = &AVLTree<T>::cmp;
+	comparison = AVLTree<T>::cmp;
 	size = 0;
 }
 
 template <typename T>
-AVLTree<T>::AVLTree(bool (*comp)(T&, T&)) {
+AVLTree<T>::AVLTree(bool (*comp)(T, T)) {
 	root = nullptr;
-	comparison = &AVLTree<T>::comp;
+	comparison = AVLTree<T>::comp;
 	size = 0;
 }
 

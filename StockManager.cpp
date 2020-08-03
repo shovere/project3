@@ -10,16 +10,15 @@ void StockManager::Stock::Print() {
 }
 
 StockManager::StockManager() {
-	bool (*ptr)(Stock*, Stock*) = compByName;
-	stocksByValue = new AVLTree<Stock*>(ptr);///fix
-	stocksByName = new AVLTree<Stock*>(compByName);///fix
+	stocksByValue = new AVLTree<Stock*>(compByValue);
+	stocksByName = new AVLTree<Stock*>(compByName);
 }
 
 StockManager::StockManager(std::string fileName) {
 }
 
 bool StockManager::compByName(Stock* first, Stock* second) {
-	return first->name < second->name;
+	return first->name.compare(second->name) < 0;
 }
 
 bool StockManager::compByValue(Stock* first, Stock* second) {
