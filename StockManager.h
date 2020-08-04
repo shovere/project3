@@ -8,7 +8,7 @@ class StockManager
 {
 private:
 	struct Stock {
-		double avgValue;
+		float avgValue;
 		std::string name;
 		FiveYearHashMap* fyhm;
 		Stock();

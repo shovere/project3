@@ -367,13 +367,13 @@ std::vector<T>& AVLTree<T>::GetDescending(Node* node, std::vector<T>& vec, int n
 	if (!node)
 		return vec;
 	if (vec.size() < num) {
-		GetDecending(node->right, vec, num);
+		GetDescending(node->right, vec, num);
 	}
 	if (vec.size() < num) {
 		vec.push_back(node->data);
 	}
 	if (vec.size() < num) {
-		GetDecending(node->left, vec, num);
+		GetDescending(node->left, vec, num);
 	}
 	return vec;
 }
@@ -385,7 +385,7 @@ std::vector<T>& AVLTree<T>::Ascend(std::vector<T>& vec, int num) {
 
 template <typename T>
 std::vector<T>& AVLTree<T>::Descend(std::vector<T>& vec, int num) {
-	return GetDecending(root, vec, num);
+	return GetDescending(root, vec, num);
 }
 
 template <typename T>
