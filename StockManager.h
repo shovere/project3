@@ -4,8 +4,6 @@
 #include "AVLTree.h"
 #include "FiveYearHashMap.h"
 
-enum StockOrder{Ascend, Descend};
-
 class StockManager
 {
 private:
@@ -14,23 +12,25 @@ private:
 		std::string name;
 		FiveYearHashMap* fyhm;
 		Stock();
-		Stock(std::string name, std::string file);
+		Stock(std::string name, std::ifstream& fin, std::ifstream::streampos& track);
 		void Print();
 	};
 	AVLTree<Stock*>* stocksByValue;
 	AVLTree<Stock*>* stocksByName;
 
+	void setDates();
+	void LoadFile(std::string fileName);
 	static bool compByName(Stock* first, Stock* second);
 	static bool compByValue(Stock* first, Stock* second);
 
 public:
 	StockManager();
 	StockManager(std::string fileName);
-	void LoadFile(std::string fileName);
-	void PrintStock(std::string name);
-
 	std::vector<Stock*> FindAllStocks();
-	std::vector<Stock*> FindTopStocks(int num, StockOrder order);
+	std::vector<Stock*> FindTopStocks(int num);
+	std::vector<Stock*> FindBottomStocks(int num);
 	Stock* FindStock(std::string name);
+	void PrintStock(std::string name);
+	std::vector<std::string> dates;
 };
 

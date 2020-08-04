@@ -2,25 +2,26 @@
 #include "AVLTree.h"
 #include <string>
 #include <iostream>
-
-void StockManager::Stock::Print() {
-	std::cout << "Name: " << name << std::endl;
-	std::cout << "Average Price: " << avgValue << std::endl;
-	std::cout << std::endl;
-}
+#include <fstream>
 
 StockManager::Stock::Stock()
 {
 
 }
 
-StockManager::Stock::Stock(std::string name, std::string file)
+StockManager::Stock::Stock(std::string name, std::ifstream& fin, std::ifstream::streampos& track)
 {
 	this->name = name;
-	fyhm = new FiveYearHashMap(file, this->name);
+	fyhm = new FiveYearHashMap(fin,this->name,track);
 	avgValue = fyhm->averageValue;
 
 }
+void StockManager::Stock::Print() {
+	std::cout << "Name: " << name << std::endl;
+	std::cout << "Average Price: " << avgValue << std::endl;
+	std::cout << std::endl;
+}
+
 
 StockManager::StockManager() {
 	stocksByValue = new AVLTree<Stock*>(compByValue);
@@ -28,9 +29,9 @@ StockManager::StockManager() {
 }
 
 StockManager::StockManager(std::string fileName) {
-	LoadFile(fileName);
 	stocksByValue = new AVLTree<Stock*>(compByValue);
 	stocksByName = new AVLTree<Stock*>(compByName);
+	LoadFile(fileName);
 }
 
 bool StockManager::compByName(Stock* first, Stock* second) {
@@ -46,35 +47,106 @@ std::vector<StockManager::Stock*> StockManager::FindAllStocks() {
 	return stocksByName->Decend(vec);
 }
 
-std::vector<StockManager::Stock*> StockManager::FindTopStocks(int num, StockOrder order) {
+std::vector<StockManager::Stock*> StockManager::FindTopStocks(int num) {
 	std::vector<Stock*> vec;
-	if(order == Ascend)
-		return stocksByValue->Ascend(vec, num);
-	if(order == Descend)
-		return stocksByValue->Decend(vec, num);
+	return stocksByValue->Decend(vec, num);
 }
-StockManager::Stock* StockManager::FindStock(std::string name) {
-	Stock stock;
-	stock.name = name;
-	return stocksByName->Find(&stock);
 
+std::vector<StockManager::Stock*> StockManager::FindBottomStocks(int num) {
+	std::vector<Stock*> vec;
+	return stocksByValue->Ascend(vec, num);
+}
+
+StockManager::Stock* StockManager::FindStock(std::string name) {
+	std::cout << "entered" << std::endl;
+	Stock* stock = new Stock();
+	stock->name = name;
+	Stock* temp;
+	temp = stocksByName->Find(stock);
+	delete stock;
+	return temp;
+	
+}
+
+void StockManager::setDates()
+{
+	bool isLeapYear = false;
+	std::string year;
+	std::string month;
+	std::string day;
+	std::string date;
+	int maxDay;
+	for (int i = 13; i < 19; i++)
+	{
+		if (i == 16)
+			isLeapYear = true;
+		year = std::to_string(i);
+		
+		for (int j = 1; j < 32; j++ )
+		{
+			month = std::to_string(j);
+			if (isLeapYear && j == 2)
+			{
+				isLeapYear = false;
+				maxDay = 29;
+			}
+			else if (j == 2)
+				maxDay = 28;
+
+			switch (j)
+			{
+			case 1:
+				maxDay = 31;
+			case 3:
+				maxDay = 31;
+			case 5:
+				maxDay = 31;
+			case 7:
+				maxDay = 31;
+			case 8:
+				maxDay = 31;
+			case 10:
+				maxDay = 31;
+			case 12:
+				maxDay = 31;
+			}
+
+			switch (j)
+			{
+			case 4:
+				maxDay = 30;
+			case 6:
+				maxDay = 30;
+			case 9:
+				maxDay = 30;
+			case 11:
+				maxDay = 30;
+			}
+			for (int k = 0; k < maxDay; k++)
+			{
+				day = std::to_string(k);
+				date = year + "-" + month + "-" + day;
+				dates.push_back(date);
+			}
+
+		}
+	}
 }
 
 void StockManager::LoadFile(std::string fileName) {
 
-	std::fstream fin(fileName, std::ios::in);
-
+	std::ifstream fin(fileName, std::ios::in);
+	std::ifstream::streampos track = fin.tellg();
 	std::string name = "";
 	std::string line;
-	int tracker = 0;
 	bool begin = true;
-	while (fin >> line)
+	while (fin >>line)
 	{
-
-		if (begin || tracker < 500)//speeds up stuff, 500 is 100 * number of years. ensures we dont miss a stock
+		
+		if (begin)
 		{
+			track = fin.tellg();
 			begin = false;
-			tracker++;
 			continue;
 		}
 		int it = 0;
@@ -82,16 +154,21 @@ void StockManager::LoadFile(std::string fileName) {
 		std::stringstream s(line);
 		while (std::getline(s, word, ','))
 		{
-			if (it == 6 && word != name)
+			if (it == 6 && word != name && word != "Name")
 			{
-				Stock *st = new Stock(word, fileName);
+				
+				fin.seekg(track);
+				Stock *st = new Stock(word, fin, track);
 				stocksByName->Insert(st);
 				stocksByValue->Insert(st);
 				name = word;
 			}
 			it++;
 		}
-		tracker = 0;
+		
+		fin.seekg(track);
+		begin = true;
+				
 	}
 }
 

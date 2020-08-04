@@ -17,8 +17,8 @@ private:
 		Node(T& data, Node* left, Node* right);
 	};
 	Node* root;
-	bool (*comparison)(T, T);
-	static bool cmp(T first, T second);
+	bool(*comparison)(T, T);
+	static bool cmp(T& first, T& second);
 
 	Node* Search(Node* node, T& data);
 	Node* RotateLeft(Node* node);
@@ -37,24 +37,24 @@ private:
 	std::vector<T>& GetDecending(Node* node, std::vector<T>& vec, int num);
 
 public:
-	static int size;
+	int size;
 	AVLTree();
-	AVLTree(bool (*comparison)(T, T));
+	AVLTree(bool(*comparison)(T, T));
 	AVLTree(AVLTree& other);
 	AVLTree& operator=(AVLTree& other);
 	~AVLTree();
 	void Insert(T data);
 	bool Delete(T data);
 	T& Find(T data);
-	std::vector<T>& Ascend(std::vector<T>& vec, int num = size);
-	std::vector<T>& Decend(std::vector<T>& vec, int num = size);
+	std::vector<T>& Ascend(std::vector<T>& vec, int num = 500);
+	std::vector<T>& Decend(std::vector<T>& vec, int num = 500);
 	void Clear();
 	void Print();
 };
 
 template <typename T>
 AVLTree<T>::Node::Node() {
-	data{};
+	data = nullptr;
 	left = nullptr;
 	right = nullptr;
 }
@@ -81,7 +81,7 @@ AVLTree<T>::AVLTree() {
 }
 
 template <typename T>
-AVLTree<T>::AVLTree(bool (*comp)(T, T)) {
+AVLTree<T>::AVLTree(bool(*comp)(T, T)) {
 	root = nullptr;
 	comparison = comp;
 	size = 0;
@@ -193,7 +193,9 @@ void AVLTree<T>::Insert(T data) {
 
 template <typename T>
 typename AVLTree<T>::Node* AVLTree<T>::InsertNode(Node* node, T& data) {
+
 	if (!node) {
+
 		node = new Node(data);
 		size++;
 		return node;
@@ -350,7 +352,7 @@ std::vector<T>& AVLTree<T>::GetAscending(Node* node, std::vector<T>& vec, int nu
 	if (vec.size() < num) {
 		GetAscending(node->left, vec, num);
 	}
-	if(vec.size() < num) {
+	if (vec.size() < num) {
 		vec.push_back(node->data);
 	}
 	if (vec.size() < num) {
@@ -387,6 +389,7 @@ std::vector<T>& AVLTree<T>::Decend(std::vector<T>& vec, int num) {
 }
 
 template <typename T>
-bool AVLTree<T>::cmp(T first, T second) {
+bool AVLTree<T>::cmp(T& first, T& second) {
 	return first < second;
 }
+
