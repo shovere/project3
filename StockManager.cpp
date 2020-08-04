@@ -44,12 +44,12 @@ bool StockManager::compByValue(Stock* first, Stock* second) {
 
 std::vector<StockManager::Stock*> StockManager::FindAllStocks() {
 	std::vector<Stock*> vec;
-	return stocksByName->Decend(vec);
+	return stocksByName->Ascend(vec);
 }
 
 std::vector<StockManager::Stock*> StockManager::FindTopStocks(int num) {
 	std::vector<Stock*> vec;
-	return stocksByValue->Decend(vec, num);
+	return stocksByValue->Descend(vec, num);
 }
 
 std::vector<StockManager::Stock*> StockManager::FindBottomStocks(int num) {

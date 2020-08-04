@@ -34,7 +34,7 @@ private:
 	void CopyFromTree(Node* node);
 	Node* FindParent(Node* node, Node* child);
 	std::vector<T>& GetAscending(Node* node, std::vector<T>& vec, int num);
-	std::vector<T>& GetDecending(Node* node, std::vector<T>& vec, int num);
+	std::vector<T>& GetDescending(Node* node, std::vector<T>& vec, int num);
 
 public:
 	int size;
@@ -46,8 +46,8 @@ public:
 	void Insert(T data);
 	bool Delete(T data);
 	T& Find(T data);
-	std::vector<T>& Ascend(std::vector<T>& vec, int num = 500);
-	std::vector<T>& Decend(std::vector<T>& vec, int num = 500);
+	std::vector<T>& Ascend(std::vector<T>& vec, int num = 505);
+	std::vector<T>& Descend(std::vector<T>& vec, int num = 505);
 	void Clear();
 	void Print();
 };
@@ -363,7 +363,7 @@ std::vector<T>& AVLTree<T>::GetAscending(Node* node, std::vector<T>& vec, int nu
 }
 
 template <typename T>
-std::vector<T>& AVLTree<T>::GetDecending(Node* node, std::vector<T>& vec, int num) {
+std::vector<T>& AVLTree<T>::GetDescending(Node* node, std::vector<T>& vec, int num) {
 	if (!node)
 		return vec;
 	if (vec.size() < num) {
@@ -384,7 +384,7 @@ std::vector<T>& AVLTree<T>::Ascend(std::vector<T>& vec, int num) {
 }
 
 template <typename T>
-std::vector<T>& AVLTree<T>::Decend(std::vector<T>& vec, int num) {
+std::vector<T>& AVLTree<T>::Descend(std::vector<T>& vec, int num) {
 	return GetDecending(root, vec, num);
 }
 

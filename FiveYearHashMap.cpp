@@ -277,10 +277,10 @@ void FiveYearHashMap::sortValues() {
 float FiveYearHashMap::setAvgValue()
 {
 	float avgCost = 0;
-	for (int i = 0; i < numlines; ++i)
+	for (unsigned int i = 0; i < values.size(); ++i)
 	{
 		avgCost += values[i]->value;
 	}
-	avgCost /= (float)numlines;
+	avgCost /= values.size();
 	return avgCost;
 }

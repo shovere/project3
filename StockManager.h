@@ -15,8 +15,7 @@ private:
 		Stock(std::string name, std::ifstream& fin, std::ifstream::streampos& track);
 		void Print();
 	};
-	AVLTree<Stock*>* stocksByValue;
-	AVLTree<Stock*>* stocksByName;
+
 
 	void setDates();
 	void LoadFile(std::string fileName);
@@ -24,6 +23,8 @@ private:
 	static bool compByValue(Stock* first, Stock* second);
 
 public:
+	AVLTree<Stock*>* stocksByValue;
+	AVLTree<Stock*>* stocksByName;
 	StockManager();
 	StockManager(std::string fileName);
 	std::vector<Stock*> FindAllStocks();
