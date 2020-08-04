@@ -34,6 +34,26 @@ StockManager::StockManager(std::string fileName) {
 	LoadFile(fileName);
 }
 
+StockManager::StockManager(StockManager& other) {
+	stocksByValue = new AVLTree<Stock*>(compByValue);
+	*stocksByValue = *other.stocksByValue;
+	stocksByName = new AVLTree<Stock*>(compByName);
+	*stocksByName = *other.stocksByName;
+}
+
+StockManager& StockManager::operator=(StockManager& other) {
+	stocksByValue = new AVLTree<Stock*>(compByValue);
+	*stocksByValue = *other.stocksByValue;
+	stocksByName = new AVLTree<Stock*>(compByName);
+	*stocksByName = *other.stocksByName;
+	return *this;
+}
+
+StockManager::~StockManager() {
+	delete stocksByValue;
+	delete stocksByName;
+}
+
 bool StockManager::compByName(Stock* first, Stock* second) {
 	return first->name.compare(second->name) < 0;
 }

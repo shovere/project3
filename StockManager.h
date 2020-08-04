@@ -23,10 +23,13 @@ private:
 	static bool compByValue(Stock* first, Stock* second);
 
 public:
-	AVLTree<Stock*>* stocksByValue;
+	AVLTree<Stock*>* stocksByValue;//move these back to private later
 	AVLTree<Stock*>* stocksByName;
 	StockManager();
 	StockManager(std::string fileName);
+	StockManager(StockManager& other);
+	StockManager& operator=(StockManager& other);
+	~StockManager();
 	std::vector<Stock*> FindAllStocks();
 	std::vector<Stock*> FindTopStocks(int num);
 	std::vector<Stock*> FindBottomStocks(int num);
