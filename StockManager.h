@@ -30,9 +30,12 @@ public:
 	StockManager(StockManager& other);
 	StockManager& operator=(StockManager& other);
 	~StockManager();
-	std::vector<Stock*> FindAllStocks();
-	std::vector<Stock*> FindTopStocks(int num);
-	std::vector<Stock*> FindBottomStocks(int num);
+	std::vector<Stock*> FindAllStocksByName();
+	std::vector<Stock*> FindAllStocksByValue();
+	std::vector<Stock*> FindTopStocksByName(int num);
+	std::vector<Stock*> FindBottomStocksByName(int num);
+	std::vector<Stock*> FindTopStocksByValue(int num);
+	std::vector<Stock*> FindBottomStocksByValue(int num);
 	Stock* FindStock(std::string name);
 	void PrintStock(std::string name);
 	std::vector<std::string> dates;

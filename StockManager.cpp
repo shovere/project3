@@ -62,19 +62,34 @@ bool StockManager::compByValue(Stock* first, Stock* second) {
 	return first->avgValue < second->avgValue;
 }
 
-std::vector<StockManager::Stock*> StockManager::FindAllStocks() {
+std::vector<StockManager::Stock*> StockManager::FindAllStocksByName() {
 	std::vector<Stock*> vec;
-	return stocksByName->Ascend(vec);
+	return stocksByName->Ascend(vec, stocksByName->GetSize());
 }
 
-std::vector<StockManager::Stock*> StockManager::FindTopStocks(int num) {
+std::vector<StockManager::Stock*> StockManager::FindAllStocksByValue() {
+	std::vector<Stock*> vec;
+	return stocksByValue->Ascend(vec, stocksByName->GetSize());
+}
+
+std::vector<StockManager::Stock*> StockManager::FindTopStocksByValue(int num) {
 	std::vector<Stock*> vec;
 	return stocksByValue->Descend(vec, num);
 }
 
-std::vector<StockManager::Stock*> StockManager::FindBottomStocks(int num) {
+std::vector<StockManager::Stock*> StockManager::FindBottomStocksByValue(int num) {
 	std::vector<Stock*> vec;
 	return stocksByValue->Ascend(vec, num);
+}
+
+std::vector<StockManager::Stock*> StockManager::FindTopStocksByName(int num) {
+	std::vector<Stock*> vec;
+	return stocksByName->Descend(vec, num);
+}
+
+std::vector<StockManager::Stock*> StockManager::FindBottomStocksByName(int num) {
+	std::vector<Stock*> vec;
+	return stocksByName->Ascend(vec, num);
 }
 
 StockManager::Stock* StockManager::FindStock(std::string name) {

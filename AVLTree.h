@@ -35,9 +35,9 @@ private:
 	Node* FindParent(Node* node, Node* child);
 	std::vector<T>& GetAscending(Node* node, std::vector<T>& vec, int num);
 	std::vector<T>& GetDescending(Node* node, std::vector<T>& vec, int num);
+	int size;
 
 public:
-	int size;
 	AVLTree();
 	AVLTree(bool(*comparison)(T, T));
 	AVLTree(AVLTree& other);
@@ -46,8 +46,9 @@ public:
 	void Insert(T data);
 	bool Delete(T data);
 	T& Find(T data);
-	std::vector<T>& Ascend(std::vector<T>& vec, int num = 505);
-	std::vector<T>& Descend(std::vector<T>& vec, int num = 505);
+	std::vector<T>& Ascend(std::vector<T>& vec, int num);
+	std::vector<T>& Descend(std::vector<T>& vec, int num);
+	int GetSize();
 	void Clear();
 	void Print();
 };
@@ -392,4 +393,10 @@ template <typename T>
 bool AVLTree<T>::cmp(T& first, T& second) {
 	return first < second;
 }
+
+template <typename T>
+int AVLTree<T>::GetSize() {
+	return size;
+}
+
 
