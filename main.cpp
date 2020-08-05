@@ -1,19 +1,34 @@
+#include "mainwindow.h"
 #include <iostream>
 #include <string>
 #include "FiveYearHashMap.h"
-using namespace std;
+#include "StockManager.h"
+#include <QApplication>
+#include <vector>
+#include <QtCharts>
 
-int main()
+
+
+int main(int argc, char *argv[])
 {
-    string file = "./all_stocks_5yr.csv";
-    string name = "AAL";
-    FiveYearHashMap fyhm(file, name);
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.setWindowState(Qt::WindowMaximized);
 
-    std::fstream fin;
-    fin.open(file, std::ios::in);
+    w.setWindowTitle("Stock Manager");
+    std::string file = qApp->applicationDirPath().toStdString() + "/all_stocks_5yr.csv";
 
-    string date = "2013-02-08";
-    cout << fyhm[date]->value << endl;
+    StockManager FO(file);
 
-    return 0;
+    w.instantiate(FO);
+
+    w.addNewDropDownName();
+    w.addNewDropDownDate();
+
+
+
+    w.show();
+
+
+    return a.exec();
 }
