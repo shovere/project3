@@ -102,6 +102,8 @@ StockManager::Stock* StockManager::FindStock(std::string name) {
 
 }
 
+//used to create all the accessible dates possible in the data set we have
+//this is mainly for GUI usage
 void StockManager::setDates()
 {
     bool isLeapYear = false;
@@ -192,6 +194,8 @@ void StockManager::setDates()
     }
 }
 
+//this keeps track of where each stock begins
+//it also determines where the ifstream is active and sets the ifstream according to where different stocks occur
 void StockManager::LoadFile(std::string fileName) {
 
     std::ifstream fin(fileName, std::ios::in);
@@ -201,7 +205,7 @@ void StockManager::LoadFile(std::string fileName) {
     bool begin = true;
     while (fin >>line)
     {
-
+         //skips the first line
         if (begin)
         {
             track = fin.tellg();
@@ -211,6 +215,9 @@ void StockManager::LoadFile(std::string fileName) {
         int it = 0;
         std::string word;
         std::stringstream s(line);
+        //finds if a new stock has occured, sends the value to fiveyearhashmap for insertion
+        //this is done so that fiveyearhashmap could theoretically be used on its own if one wanted to
+        //basically it allows further extensibility
         while (std::getline(s, word, ','))
         {
             if (it == 6 && word != name && word != "Name")
