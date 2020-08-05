@@ -17,8 +17,8 @@ class FiveYearHashMap
 
 public:
 
-    const static int days = 31 * 12;//372
-    int size;//value node input tracker, should be same as numlines at end
+    const static int days = 31 * 12;//372, days in my modified calendar
+    int size;
     float averageValue;
     class ValueNode
     {
@@ -61,9 +61,4 @@ private:
     float setAvgValue();
     int numlines;//value node setter
     void sortValues();
-    const static int numValues = 619041;//numValues in data set
-
-
-
-    //need to implement the big three
 };
