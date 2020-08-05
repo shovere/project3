@@ -1,3 +1,6 @@
+//Created by Steven Phang and Ethan Shover
+//Edited by Alejandro Kirsch  
+
 #include "StockManager.h"
 #include "AVLTree.h"
 #include <string>
