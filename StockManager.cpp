@@ -200,6 +200,8 @@ void StockManager::setDates()
 
 //this keeps track of where each stock begins
 //it also determines where the ifstream is active and sets the ifstream according to where different stocks occur
+//total time complexity n=number of stocks, d=dates per stock, t=tracker iterator value
+//O(N*D*T)
 void StockManager::LoadFile(std::string fileName) {
 
     std::ifstream fin(fileName, std::ios::in);
