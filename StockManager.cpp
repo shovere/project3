@@ -104,6 +104,7 @@ StockManager::Stock* StockManager::FindStock(std::string name) {
 
 //used to create all the accessible dates possible in the data set we have
 //this is mainly for GUI usage
+//constant runtime since all values are known
 void StockManager::setDates()
 {
     bool isLeapYear = false;
