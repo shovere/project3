@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 
+//Default constructor for Stock
 StockManager::Stock::Stock()
 {
     avgValue = 0;
@@ -14,6 +15,7 @@ StockManager::Stock::Stock()
     fyhm = nullptr;
 }
 
+//Modified constructor for Stock
 StockManager::Stock::Stock(std::string name, std::ifstream& fin, std::ifstream::streampos& track)
 {
     this->name = name;
@@ -21,19 +23,22 @@ StockManager::Stock::Stock(std::string name, std::ifstream& fin, std::ifstream::
     avgValue = fyhm->averageValue;
 
 }
+
+//Outputs Stock information
 void StockManager::Stock::Print() {
     std::cout << "Name: " << name << std::endl;
     std::cout << "Average Price: " << avgValue << std::endl;
     std::cout << std::endl;
 }
 
-
+//Default constructor for StockManager
 StockManager::StockManager() {
     stocksByValue = new AVLTree<Stock*>(compByValue);
     stocksByName = new AVLTree<Stock*>(compByName);
     setDates();
 }
 
+//Modified constructor for StockManager
 StockManager::StockManager(std::string fileName) {
     stocksByValue = new AVLTree<Stock*>(compByValue);
     stocksByName = new AVLTree<Stock*>(compByName);
@@ -41,6 +46,7 @@ StockManager::StockManager(std::string fileName) {
     setDates();
 }
 
+//Copy constructor for StockManager
 StockManager::StockManager(StockManager& other) {
     stocksByValue = new AVLTree<Stock*>(compByValue);
     *stocksByValue = *other.stocksByValue;
@@ -48,6 +54,7 @@ StockManager::StockManager(StockManager& other) {
     *stocksByName = *other.stocksByName;
 }
 
+//Copy assignment operator for StockManager
 StockManager& StockManager::operator=(StockManager& other) {
     stocksByValue = new AVLTree<Stock*>(compByValue);
     *stocksByValue = *other.stocksByValue;
@@ -56,43 +63,56 @@ StockManager& StockManager::operator=(StockManager& other) {
     return *this;
 }
 
+//Destructor for StockManager
 StockManager::~StockManager() {
     delete stocksByValue;
     delete stocksByName;
 }
 
+//Comparator function that compares Stock objects by name
 bool StockManager::compByName(Stock* first, Stock* second) {
     return first->name.compare(second->name) < 0;
 }
 
+//Comparator function that compares Stock objects by value
 bool StockManager::compByValue(Stock* first, Stock* second) {
     return first->avgValue < second->avgValue;
 }
 
+//Returns the size of the AVL Tree
 int StockManager::GetTreeSize() {
     return stocksByName->GetSize();
 }
 
+//Returns a vector of Stock Objects in Descending order sorted by value
+//Number of stocks returned depends on num
 std::vector<StockManager::Stock*> StockManager::FindDescendingStocksByValue(int num) {
     std::vector<Stock*> vec;
     return stocksByValue->Descend(vec, num);
 }
 
+//Returns a vector of Stock Objects in Ascending order sorted by value
+//Number of stocks returned depends on num
 std::vector<StockManager::Stock*> StockManager::FindAscendingStocksByValue(int num) {
     std::vector<Stock*> vec;
     return stocksByValue->Ascend(vec, num);
 }
 
+//Returns a vector of Stock Objects in Descending order sorted by name
+//Number of stocks returned depends on num
 std::vector<StockManager::Stock*> StockManager::FindDescendingStocksByName(int num) {
     std::vector<Stock*> vec;
     return stocksByName->Descend(vec, num);
 }
 
+//Returns a vector of Stock Objects in Ascending order sorted by name
+//Number of stocks returned depends on num
 std::vector<StockManager::Stock*> StockManager::FindAscendingStocksByName(int num) {
     std::vector<Stock*> vec;
     return stocksByName->Ascend(vec, num);
 }
 
+//Searches AVL tree for a stock with the specified name and returns it
 StockManager::Stock* StockManager::FindStock(std::string name) {
     std::cout << "entered" << std::endl;
     Stock* stock = new Stock();
@@ -245,6 +265,7 @@ void StockManager::LoadFile(std::string fileName) {
     fin.close();
 }
 
+//Prints out information about a Stock object
 void StockManager::PrintStock(std::string name) {
     FindStock(name)->Print();
 }
