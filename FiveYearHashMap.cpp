@@ -29,6 +29,7 @@ FiveYearHashMap::~FiveYearHashMap() {
 
 }
 
+//FILE I/O is implicit here, this allows for greater ease of use and input into the map
 FiveYearHashMap::FiveYearHashMap(std::ifstream& fin, std::string name, std::ifstream::streampos& track) {
 
     numlines = 0;
@@ -45,6 +46,8 @@ FiveYearHashMap::FiveYearHashMap(std::ifstream& fin, std::string name, std::ifst
     float val = 0;
     std::string date;
 
+    //uses the passed in ifstream object, allows for less passes
+    //time complexity is n+tracker, where n is the number of dates in a given stock and tracker is the iterator value
     while (fin >> temp)
     {
         it = 0;
@@ -138,31 +141,40 @@ bool FiveYearHashMap::ValueNode::operator==(const FiveYearHashMap::ValueNode* a)
     return this->value == a->value;
 }
 
-
+//O(Y), where Y is max number of years, thats worst case, best case is O(1)
 void FiveYearHashMap::setPair(std::string& key, float value) {
     ValueNode* vNode = new ValueNode(hash(key), value);
-
+    //necessary for sorting and finding dates based on value
     values.push_back(vNode);
 
-
+    //allows easy access to the number of key value pairs in the map
     this->size++;
+    //file IO dependent, in format 2013-12-31, the year is 2013, which gets shortened to 3
     int year = key[3] - 48;
+    
+    //checks if a node is in the map
+    //the map utilizes a sorted linked list within each array index to avoid hashing collisions
+    //this allows for considerably less memory to be wasted
     KeyNode* temp = keys[hash(key)];
     KeyNode* prevNode = nullptr;
-    if (temp == nullptr || temp->year == year)
+    
+    //if the very first value matches the current value in the array, create a new key value pair and store it
+    if (temp == nullptr)
     {
         keys[hash(key)] = new KeyNode(year, vNode, nullptr);
         temp = nullptr;
     }
-    //in place sorted linked list, avoids collisions
+    //essentially does the same as the above, but this checks the whole list
+    //the aboive is needed because it acts as an initializer when there is no value in the array
     while (temp != nullptr)
     {
-        //put at end
+        //put at end of the list
         if (temp->year > year&& temp->nextNode == nullptr)
         {
             temp->nextNode = new KeyNode(year, vNode, nullptr);
+            break;
         }
-        //insert ahead
+        //insert ahead of the current node
         else if (temp->year < year)
         {
             if (prevNode == nullptr)
@@ -173,6 +185,23 @@ void FiveYearHashMap::setPair(std::string& key, float value) {
             {
                 prevNode->nextNode = new KeyNode(year, vNode, temp);
             }
+            break;
+        }
+        //replace if duplicate key
+        else if(temp->year == year)
+        {
+             if (prevNode == nullptr)
+            {
+                keys[hash(key)] = new KeyNode(year, vNode, temp->nextNode);
+            }
+            else
+            {
+                prevNode->nextNode = new KeyNode(year, vNode, temp->nextNode);
+            }
+            //since the former key value pair is no longer a part of the linked list anymore
+            //value must be deleted, after being replaced with new node
+            delete temp;
+            temp = nullptr;
         }
         prevNode = temp;
         temp = temp->nextNode;
@@ -186,21 +215,22 @@ void FiveYearHashMap::setPair(std::string& key, float value) {
 
 int FiveYearHashMap::hash(std::string& key) {
 
-    //say its 2014, value at index 3 = 4, in ASCII this is 48+4 = 52, so we subtract 48 to get the value we want
-
+ 
+    //strings must be in form XXXX-XX-XX
     int month = std::stoi(key.substr(5, 2));
     int day = std::stoi(key.substr(8, 2));
 
-    //our values all start at 2013, so year being = 3 would be index 0*372 + month and day
+    //year is handled elswewhere, in hash collision avoidance 
     int hashKey = ((month - 1) * 31) + day - 1;
     return hashKey;
 }
-
+//O(1) time complexity
 std::string FiveYearHashMap::reverseHash(int hashedKey) {
     int month = 0;
     int day = 0;
     std::string year;
 
+    //get year 
     switch (hashedKey / 372)
     {
     case 0:
@@ -245,7 +275,7 @@ std::string FiveYearHashMap::reverseHash(int hashedKey) {
     }
     return  year + "-" + std::to_string(month) + "-" + std::to_string(day);
 }
-
+//O(Y), where Y is max number of years, thats worst case, best case is O(1)
 FiveYearHashMap::ValueNode* FiveYearHashMap::operator[](std::string key) {
     int year = key[3] - 48;
     KeyNode* temp = keys[hash(key)];
@@ -259,7 +289,7 @@ FiveYearHashMap::ValueNode* FiveYearHashMap::operator[](std::string key) {
     }
     return nullptr;
 }
-
+//O(Y), where Y is max number of years, thats worst case, best case is O(1)
 float FiveYearHashMap::getValue(std::string key) {
     int year = key[3] - 48;
     KeyNode* temp = keys[hash(key)];
@@ -273,7 +303,7 @@ float FiveYearHashMap::getValue(std::string key) {
     }
     return -1;
 }
-
+//nlogn time complexity
 void FiveYearHashMap::sortValues() {
 
     std::sort(values.begin(),values.end(),
@@ -282,7 +312,7 @@ void FiveYearHashMap::sortValues() {
         return a->value > b->value;
     });
 }
-
+//n complexity
 float FiveYearHashMap::setAvgValue()
 {
     float avgCost = 0;
