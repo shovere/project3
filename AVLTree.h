@@ -1,5 +1,4 @@
 //Created by Steven Phang
-
 #pragma once
 #include <iostream>
 #include <algorithm>
@@ -20,7 +19,7 @@ private:
 	};
 	Node* root;
 	bool(*comparison)(T, T);
-	static bool cmp(T& first, T& second);
+	static bool cmp(T first, T second);
 
 	Node* Search(Node* node, T& data);
 	Node* RotateLeft(Node* node);
@@ -31,6 +30,7 @@ private:
 	int CheckHeight(Node* node);
 	Node* Balance(Node* node);
 	Node* InsertNode(Node* node, T& data);
+	Node* DeleteNode(Node* node, T& data);
 	void DeleteAllNodes(Node* node);
 	void Traverse(Node* root); //In order traversal
 	void CopyFromTree(Node* node);
@@ -46,7 +46,7 @@ public:
 	AVLTree& operator=(AVLTree& other);
 	~AVLTree();
 	void Insert(T data);
-	bool Delete(T data);
+	void Delete(T data);
 	T& Find(T& data);
 	std::vector<T>& Ascend(std::vector<T>& vec, int num);
 	std::vector<T>& Descend(std::vector<T>& vec, int num);
@@ -175,8 +175,6 @@ template <typename T>
 typename AVLTree<T>::Node* AVLTree<T>::Balance(Node* node) {
 	if (!node)
 		return nullptr;
-	node->left = Balance(node->left);
-	node->right = Balance(node->right);
 	if (CheckBalanceFactor(node) < -1) {
 		if (CheckBalanceFactor(node->right) == 1) {
 			return RotateRightLeft(node);
@@ -206,7 +204,7 @@ typename AVLTree<T>::Node* AVLTree<T>::Search(Node* node, T& data) {
 		node = Search(node->left, data);
 	else if (comparison(node->data, data))
 		node = Search(node->right, data);
-	
+
 	return node;
 }
 
@@ -215,7 +213,6 @@ typename AVLTree<T>::Node* AVLTree<T>::Search(Node* node, T& data) {
 template <typename T>
 void AVLTree<T>::Insert(T data) {
 	root = InsertNode(root, data);
-	root = Balance(root);
 }
 
 //Helper function for Insert(T data)
@@ -223,7 +220,6 @@ template <typename T>
 typename AVLTree<T>::Node* AVLTree<T>::InsertNode(Node* node, T& data) {
 
 	if (!node) {
-
 		node = new Node(data);
 		size++;
 		return node;
@@ -234,7 +230,7 @@ typename AVLTree<T>::Node* AVLTree<T>::InsertNode(Node* node, T& data) {
 	else if (comparison(node->data, data)) {
 		node->right = InsertNode(node->right, data);
 	}
-	return node;
+	return Balance(node);
 }
 
 //Finds the parent node of the specified node, or nullptr if its the root
@@ -269,76 +265,65 @@ void AVLTree<T>::DeleteAllNodes(Node* node) {
 	delete node;
 }
 
-//Deletes a specified node from the tree, and rebalances if necessary
-template <typename T>
-bool AVLTree<T>::Delete(T data) {
-	Node* node = Search(root, data);
-	if (!node)
-		return false;
-	if (node->left && node->right) {
-		Node* replacement = node->left;
-		if (!replacement->right) {
-			node->data = replacement->data;
-			node->left = nullptr;
-			delete replacement;
-		}
-		else {
-			while (replacement->right) {
-				if (!replacement->right->right)
-					break;
-				replacement = replacement->right;
-			}
-			node->data = replacement->right->data;
-			delete replacement->right;
-			replacement->right = nullptr;
-		}
 
+//Helper function for Delete()
+//Removes a node from the tree and rebalances
+template <typename T>
+typename AVLTree<T>::Node* AVLTree<T>::DeleteNode(Node* node, T& data) {
+
+	if (!node) {
+		return node;
 	}
-	else if (node->left) {
-		Node* parent = FindParent(root, node);
-		if (!parent) {
-			root = node->left;
-			delete node;
-		}
-		else if (parent->left == node) {
-			parent->left = node->left;
-			delete node;
-		}
-		else {
-			parent->right = node->left;
-			delete node;
-		}
+	if (comparison(data, node->data)) {
+		node->left = DeleteNode(node->left, data);
 	}
-	else if (node->right) {
-		Node* parent = FindParent(root, node);
-		if (!parent) {
-			root = node->right;
-			delete node;
-		}
-		else if (parent->left == node) {
-			parent->left = node->right;
-			delete node;
-		}
-		else {
-			parent->right = node->right;
-			delete node;
-		}
+	else if (comparison(node->data, data)) {
+		node->right = DeleteNode(node->right, data);
 	}
 	else {
-		Node* parent = FindParent(root, node);
-		if (!parent) {
-			delete node;
-			root = nullptr;
+		if (node->left && node->right) {
+			Node* replacement = node->left;
+			if (!replacement->right) {
+				node->data = replacement->data;
+				node->left = nullptr;
+				delete replacement;
+			}
+			else {
+				while (replacement->right) {
+					if (!replacement->right->right)
+						break;
+					replacement = replacement->right;
+				}
+				node->data = replacement->right->data;
+				delete replacement->right;
+				replacement->right = nullptr;
+			}
 		}
-		else if (parent->left == node)
-			parent->left = nullptr;
-		else
-			parent->right = nullptr;
-		delete node;
+		else if (node->left) {
+			Node* temp;
+			temp = node->left;
+			delete node;
+			node = temp;
+		}
+		else if (node->right) {
+			Node* temp;
+			temp = node->right;
+			delete node;
+			node = temp;
+		}
+		else {
+			node = nullptr;
+		}
+		size--;
 	}
-	root = Balance(root);
-	size--;
-	return true;
+	return Balance(node);
+}
+
+
+//Deletes a specified node from the tree, and rebalances if necessary
+template <typename T>
+void AVLTree<T>::Delete(T data) {
+	root = DeleteNode(root, data);
 }
 
 //Searches the tree for a node that contains the specified data, and return a reference to it if found
@@ -438,7 +423,7 @@ std::vector<T>& AVLTree<T>::Descend(std::vector<T>& vec, int num) {
 
 //Default comparison function
 template <typename T>
-bool AVLTree<T>::cmp(T& first, T& second) {
+bool AVLTree<T>::cmp(T first, T second) {
 	return first < second;
 }
 
